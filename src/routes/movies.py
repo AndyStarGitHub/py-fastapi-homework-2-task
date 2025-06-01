@@ -209,8 +209,6 @@ async def update_movie(
             )
             .where(MovieModel.id == movie_id)
         )
-        if result is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Movie with the given ID was not found.")
 
         update_movie = result.scalar_one_or_none()
         if update_movie is None:
