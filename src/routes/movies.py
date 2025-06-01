@@ -197,11 +197,7 @@ async def update_movie(
         movie: MovieUpdateSchema = Body(...),
         session: AsyncSession = Depends(get_async_session),
 ):
-    print("\n==== PATCH /movies request body ====")
-    pprint(movie.dict())
-    movie_to_update = await get_movie_by_id(movie_id, session)
-    if not movie_to_update:
-        raise HTTPException(status_code=404, detail="Movie with the given ID was not found.")
+
     try:
         result = await session.execute(
             select(MovieModel)
