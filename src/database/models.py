@@ -18,7 +18,6 @@ class MovieStatusEnum(str, Enum):
     POST_PRODUCTION = "Post Production"
     IN_PRODUCTION = "In Production"
 
-
 MoviesGenresModel = Table(
     "movies_genres",
     Base.metadata,

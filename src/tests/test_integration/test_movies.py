@@ -313,12 +313,19 @@ async def test_get_movie_by_id_fields_match_database(client, db_session, seed_da
     )
     result = await db_session.execute(stmt)
     random_movie = result.scalars().first()
+
+    print("\n==== PATCH /movies request body ====")
+
+
+
     assert random_movie is not None, "No movies found in the database."
 
     response = await client.get(f"/api/v1/theater/movies/{random_movie.id}/")
     assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}"
 
     response_data = response.json()
+
+    print("RESPONSE DATA", response_data)
 
     assert response_data["id"] == random_movie.id, "ID does not match."
     assert response_data["name"] == random_movie.name, "Name does not match."
@@ -329,10 +336,16 @@ async def test_get_movie_by_id_fields_match_database(client, db_session, seed_da
     assert response_data["budget"] == float(random_movie.budget), "Budget does not match."
     assert response_data["revenue"] == random_movie.revenue, "Revenue does not match."
 
+    print("random_movie.revenue", random_movie.revenue)
+    print("random_movie.country.id", random_movie.country.id)
+    print("response_data[ 1 ", response_data["country"]["id"])
+    print("response_data[ 2", response_data["country"])
+    print("response_data[ 3", response_data)
     assert response_data["country"]["id"] == random_movie.country.id, "Country ID does not match."
+    print("random_movie.country.id", random_movie.country.id)
     assert response_data["country"]["code"] == random_movie.country.code, "Country code does not match."
     assert response_data["country"]["name"] == random_movie.country.name, "Country name does not match."
-
+    print("random_movie.country.name", random_movie.country.name)
     actual_genres = sorted(response_data["genres"], key=lambda x: x["id"])
     expected_genres = sorted(
         [{"id": genre.id, "name": genre.name} for genre in random_movie.genres],
@@ -340,12 +353,21 @@ async def test_get_movie_by_id_fields_match_database(client, db_session, seed_da
     )
     assert actual_genres == expected_genres, "Genres do not match."
 
+    print(actual_genres)
+
+
     actual_actors = sorted(response_data["actors"], key=lambda x: x["id"])
+
+    print("actual_actor", actual_actors)
+
     expected_actors = sorted(
         [{"id": actor.id, "name": actor.name} for actor in random_movie.actors],
         key=lambda x: x["id"]
     )
     assert actual_actors == expected_actors, "Actors do not match."
+
+    print("expected_actors", expected_actors)
+
 
     actual_languages = sorted(response_data["languages"], key=lambda x: x["id"])
     expected_languages = sorted(

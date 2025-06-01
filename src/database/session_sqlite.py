@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy import engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_session, async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 
 from config import get_settings
@@ -59,3 +60,8 @@ async def reset_sqlite_database() -> None:
     async with sqlite_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSQLiteSessionLocal() as session:
+        yield session
